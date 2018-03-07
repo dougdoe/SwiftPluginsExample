@@ -19,39 +19,35 @@ class AppDelegate: NSObject, NSApplicationDelegate
     
     let pluginHost = PluginHost()
 
-    func applicationDidFinishLaunching(aNotification: NSNotification)
+    func applicationDidFinishLaunching(_ aNotification: Notification)
     {
-        let path = NSBundle.mainBundle().bundlePath
+        let path = Bundle.main.bundlePath
         
-        pluginHost.loadPluginsFromPath(path.stringByAppendingString("/../"))
-        
-
         pluginsMenu.removeAllItems()
 
+        pluginHost.loadPluginsFromPath(path + "/../")
         pluginHost.plugins.forEach {
-            let menuItem = NSMenuItem(title: $0.name, action: Selector("pluginItemClicked:"), keyEquivalent: "")
+            let menuItem = NSMenuItem(title: $0.name, action: #selector(AppDelegate.pluginItemClicked(_:)), keyEquivalent: "")
             menuItem.representedObject = $0
             
             pluginsMenu.addItem(menuItem)
         }
     }
 
-    func applicationWillTerminate(aNotification: NSNotification)
+    func applicationWillTerminate(_ aNotification: Notification)
     {
     }
 
-    func pluginItemClicked(sender: NSMenuItem)
+    @objc func pluginItemClicked(_ sender: NSMenuItem)
     {
         let selectedRange = textView.selectedRange()
         
-        if let plugin = sender.representedObject as? PluginInterface,
-            string = textView.string as NSString? {
-                
-                let selectedString = string.substringWithRange(selectedRange)
-                if let convertedString = plugin.convertString(selectedString) {
-                    textView.replaceCharactersInRange(selectedRange, withString: convertedString)
-                }
-                
+        if let plugin = sender.representedObject as? PluginInterface {
+            let string = textView.string as NSString?
+            let selectedString = string?.substring(with: selectedRange)
+            if let convertedString = plugin.convert(selectedString) {
+                textView.replaceCharacters(in: selectedRange, with: convertedString)
+            }
         }
     }
 }

@@ -13,11 +13,10 @@ class Base64Plugin : NSObject, PluginInterface
 {
     var name = "Text to Base64"
     
-    func convertString(string: String?) -> String?
+    func convert(_ string: String?) -> String?
     {
-        if let string = string,
-            stringData = string.dataUsingEncoding(NSUTF8StringEncoding) {
-                return stringData.base64EncodedStringWithOptions(.Encoding64CharacterLineLength)
+        if let string = string, let stringData = string.data(using: String.Encoding.utf8) {
+            return stringData.base64EncodedString(options: .lineLength64Characters)
         }
         
         return string

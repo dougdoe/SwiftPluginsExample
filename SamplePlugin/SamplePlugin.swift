@@ -13,7 +13,7 @@ class SamplePlugin : NSObject, PluginInterface
 {
     var name = "SamplePlugin"
     
-    func convertString(string: String?) -> String?
+    func convert(_ string: String?) -> String?
     {
         if let string = string {
             return string

@@ -13,31 +13,26 @@ class PluginHost
 {
     var plugins: [PluginInterface] = []
     
-    func loadPluginsFromPath(path: String)
+    func loadPluginsFromPath(_ path: String)
     {
-        let fileManager = NSFileManager.defaultManager()
+        let fileManager = FileManager.default
         
-        guard let enumerator = fileManager.enumeratorAtURL(NSURL(fileURLWithPath: path), includingPropertiesForKeys: [ NSURLNameKey, NSURLIsDirectoryKey ], options: [ .SkipsHiddenFiles, .SkipsSubdirectoryDescendants ], errorHandler: nil) else {
+        guard let enumerator = fileManager.enumerator(at: URL(fileURLWithPath: path), includingPropertiesForKeys: [ URLResourceKey.nameKey, URLResourceKey.isDirectoryKey ], options: [ .skipsHiddenFiles, .skipsSubdirectoryDescendants ], errorHandler: nil) else {
             
             return
         }
         
-        while let item = enumerator.nextObject() as? NSURL {
+        while let item = enumerator.nextObject() as? URL {
             do {
-            var isDirectory: AnyObject?
-                try item.getResourceValue(&isDirectory, forKey: NSURLIsDirectoryKey)
+                var isDirectory: AnyObject?
+                try (item as NSURL).getResourceValue(&isDirectory, forKey: URLResourceKey.isDirectoryKey)
                 
-                if let urlPath = item.path where urlPath.hasSuffix("bundle"),
-                    let isDirectory = isDirectory as? NSNumber where isDirectory.boolValue,
-                    let bundle = NSBundle(URL: item) where bundle.load() {
+                if item.path.hasSuffix("bundle"), let isDirectory = isDirectory as? NSNumber, isDirectory.boolValue, let bundle = Bundle(url: item), bundle.load() {
                     
-                        if let cls = bundle.principalClass as? NSObject.Type,
-                            plugin = cls.init() as? PluginInterface {
-                                
-                                plugins.append(plugin)
-                                
-                                print("> Plugin: \(plugin.name) loaded")
-                        }
+                    if let cls = bundle.principalClass as? NSObject.Type, let plugin = cls.init() as? PluginInterface {
+                            plugins.append(plugin)
+                            print("> Plugin: \(plugin.name) loaded")
+                    }
                 }
                 
             } catch _ { }
