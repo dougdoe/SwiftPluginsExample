@@ -25,7 +25,7 @@ class AppDelegate: NSObject, NSApplicationDelegate
 
         pluginsMenu.removeAllItems()
 
-        pluginHost.loadPluginsFromPath(path[0] + "/PluginHost/plugins", outputView: textView)
+        pluginHost.loadPluginsFromPath(path[0] + "/PluginHost/", outputView: textView)
         pluginHost.plugins.forEach {
             let menuItem = NSMenuItem(title: $0.name, action: #selector(AppDelegate.pluginItemClicked(_:)), keyEquivalent: "")
             menuItem.representedObject = $0
