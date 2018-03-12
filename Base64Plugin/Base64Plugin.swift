@@ -11,7 +11,7 @@ import Foundation
 
 class Base64Plugin : NSObject, PluginInterface
 {
-    var name = "Text to Base64"
+    var name = "Base64Plugin"
     
     func convert(_ string: String?) -> String?
     {

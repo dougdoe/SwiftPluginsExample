@@ -6,14 +6,13 @@
 //  Copyright © 2016 Jarosław Pendowski. All rights reserved.
 //
 
-import Foundation
-
+import Cocoa
 
 class PluginHost
 {
     var plugins: [PluginInterface] = []
     
-    func loadPluginsFromPath(_ path: String)
+    func loadPluginsFromPath(_ path: String, outputView: NSTextView)
     {
         let fileManager = FileManager.default
         
@@ -30,8 +29,9 @@ class PluginHost
                 if item.path.hasSuffix("bundle"), let isDirectory = isDirectory as? NSNumber, isDirectory.boolValue, let bundle = Bundle(url: item), bundle.load() {
                     
                     if let cls = bundle.principalClass as? NSObject.Type, let plugin = cls.init() as? PluginInterface {
-                            plugins.append(plugin)
-                            print("> Plugin: \(plugin.name) loaded")
+                        plugins.append(plugin)
+                        let selectedRange = outputView.selectedRange()
+                        outputView.replaceCharacters(in: selectedRange, with: "> Plugin Loaded: \(plugin.name)\n")
                     }
                 }
                 

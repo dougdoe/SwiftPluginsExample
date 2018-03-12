@@ -21,11 +21,11 @@ class AppDelegate: NSObject, NSApplicationDelegate
 
     func applicationDidFinishLaunching(_ aNotification: Notification)
     {
-        let path = Bundle.main.bundlePath
-        
+        let path = NSSearchPathForDirectoriesInDomains(.applicationSupportDirectory, .userDomainMask, true)
+
         pluginsMenu.removeAllItems()
 
-        pluginHost.loadPluginsFromPath(path + "/../")
+        pluginHost.loadPluginsFromPath(path[0] + "/PluginHost/plugins", outputView: textView)
         pluginHost.plugins.forEach {
             let menuItem = NSMenuItem(title: $0.name, action: #selector(AppDelegate.pluginItemClicked(_:)), keyEquivalent: "")
             menuItem.representedObject = $0
